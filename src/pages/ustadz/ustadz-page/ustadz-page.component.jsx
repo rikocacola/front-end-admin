@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import { Alert, Button, Container } from 'react-bootstrap';
+import {Button, Container} from 'react-bootstrap';
 
 import ListUstadz from '../list-ustadz/list-ustadz.components'
 // import AddUstadz from '../add-ustadz-page/add-ustadz-page.component';

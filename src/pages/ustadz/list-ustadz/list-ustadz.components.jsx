@@ -1,112 +1,73 @@
 import React from 'react';
+import axios from 'axios';
 import {format, parseISO} from 'date-fns';
-import {Link} from 'react-router-dom';
 
-import { Button, Table } from 'react-bootstrap';
+import {Button, Table} from 'react-bootstrap';
 
-class ListUstadz extends React.Component{
+class ListUstadz extends React.Component {
+    constructor(props){
+        super(props);
 
-    constructor(){
-        super();
-        
         this.state = {
             ustadz : [],
-            response : {},
-            error : null
+            errorMsg : ''
         }
     }
+
     componentDidMount(){
-        fetch("http://localhost:3000/getUstadz")
-        .then(res => res.json())
-        .then(
-            (result) => {
-                this.setState({
-                    ustadz:result
-                });
-            },
-            (error) => {
-                this.setState({
-                    error
-                });
-            }
-        )
+        axios.get(`http://localhost:3000/getUstadz`)
+        .then(response => {
+            console.log(response)
+            this.setState({
+                ustadz : response.data
+            })
+        })
+        .catch(error => {
+            console.log(error)
+            this.setState({
+                errorMsg : 'Error retreiving data'
+            })
+        })
     }
 
-    deleteUstadz(niyUstadz){
-        const { ustadz } = this.state;
-
-        const apiUrl = "http://localhost:3000/deleteUstadz/";
-        const formData = new FormData();
-        formData.append('niyUstadz', niyUstadz);
-
-        const options = {
-            method: 'DELETE',
-            body: formData
-        }
-
-        fetch((apiUrl + niyUstadz), options)
-        .then(res => res.json())
-        .then(
-            (result) => {
-                this.setState({
-                    response : result,
-                    ustadz : ustadz.filter(ustad => ustad.niyUstadz !== niyUstadz)
-                });
-            },
-            (error) => {
-                this.setState({
-                    error
-                });
-            }
-            )
-    }
-
-    render(){
-        const { error, ustadz} = this.state;
-
-        if (error) {
-            return(
-                <div>
-                    Error : {error.message}
-                </div>
-            )
-        } else {
-            return(
+    render() {
+        const {ustadz, errorMsg} = this.state
+        return(
             <div>
-                <Table responsive>
-                    <thead>
-                        <tr>
-                        <th>#ID</th>
-                        <th>Nama</th>
-                        <th>No. Induk Yayasan</th>
-                        <th>Alamat</th>
-                        <th>No. HP</th>
-                        <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {ustadz.map(ustad => (
-                        <tr key={ustad.niyUstadz}>
-                        <td>{ustad.tempatLahir}</td>
-                        <td>{ustad.namaUstadz}</td>
-                        <td>{ustad.nikUstadz}</td>
-                        <td>{ustad.pendidikanUstadz}</td>
-                        <td>{format(parseISO(ustad.tanggalLahirUstadz), 'dd/MM/yyyy')}</td>
-                        <td>
-                            <Button variant='info'>
-                                <Link to={`/ustadz/edit/${ustad.niyUstadz}`}>Edit</Link>
-                            </Button>
-                            <Button variant='danger' onClick={() => this.deleteUstadz(ustad.niyUstadz)}>
-                                Delete
-                            </Button>
-                        </td>
-                        </tr>   
-                        ))}
-                    </tbody>
-                </Table>
+                {
+                ustadz.length ?
+                ustadz.map(ustad => 
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                <th>No</th>
+                                <th>No. Induk</th>
+                                <th>Nama</th>
+                                <th>Tempat Lahir</th>
+                                <th>Tanggal Lahir</th>
+                                <th>Pendidikan Terakhir</th>
+                                <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr key={ustad.niyUstadz}>
+                                <td>1</td>
+                                <td>{ustad.niyUstadz}</td>
+                                <td>{ustad.namaUstadz}</td>
+                                <td>{ustad.tempatLahirUstadz}</td>
+                                <td>{format(parseISO(ustad.tanggalLahirUstadz),'dd/MM/yyyy')}</td>
+                                <td>{ustad.pendidikanUstadz}</td>
+                                <td><Button><span className='glyphicon glyphicon-trash' aria-hidden='true'></span></Button></td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                ) : null }
+                {
+                    errorMsg ? 
+                    <div>{errorMsg}</div> : null
+                }
             </div>
-            )
-        }
+        )
     }
 }
 
