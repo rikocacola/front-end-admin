@@ -57,7 +57,7 @@ class ListUstadz extends React.Component {
                                 <td>{ustad.tempatLahirUstadz}</td>
                                 <td>{format(parseISO(ustad.tanggalLahirUstadz),'dd/MM/yyyy')}</td>
                                 <td>{ustad.pendidikanUstadz}</td>
-                                <td><Button><span className='glyphicon glyphicon-trash' aria-hidden='true'></span></Button></td>
+                                <td><Button></Button></td>
                                 </tr>
                             </tbody>
                         </Table>
