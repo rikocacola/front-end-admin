@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { Row, Form, Col, Button, Container } from 'react-bootstrap';
 import Select from 'react-select'
 import DatePicker from 'react-date-picker'
+import { parseISO } from 'date-fns/esm/fp';
 
 const optionsAgama = [
     { value: "Islam", label: "Islam" },
@@ -79,7 +80,7 @@ class EditUstadz extends React.Component {
                     namaUstadz: res.data.namaUstadz,
                     nikUstadz: res.data.nikUstadz,
                     tempatLahirUstadz: res.data.tempatLahirUstadz,
-                    tanggalLahirUstadz: res.data.tanggalLahirUstadz,
+                    tanggalLahirUstadz: format(parseISO(res.data.tanggalLahirUstadz), 'yyyy-MM-dd'),
                     agamaUstadz: res.data.agamaUstadz,
                     kewarganegaraan: res.data.kewarganegaraan,
                     jenisKelamin: res.data.jenisKelamin,
@@ -96,6 +97,83 @@ class EditUstadz extends React.Component {
                     errorMsg: 'Error retreiving data'
                 })
             })
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+
+    handleSelectAgama = selectedOptAgama => {
+        this.setState({
+            selectedOptAgama,
+            agamaUstadz: selectedOptAgama.value
+        })
+    }
+
+    handleSelectKwn = selectedOptKwn => {
+        this.setState({
+            selectedOptKwn,
+            kewarganegaraan: selectedOptKwn.value
+        })
+    }
+
+    handleSelectJK = selectedOptJK => {
+        this.setState({
+            selectedOptJK,
+            jenisKelamin: selectedOptJK.value
+        })
+    }
+
+    handleSelectPend = selectedOptPend => {
+        this.setState({
+            selectedOptPend,
+            pendidikanUstadz: selectedOptPend.value
+        })
+    }
+
+    handleSelectStatus = selectedOptStatus => {
+        this.setState({
+            selectedOptStatus,
+            statusAktif: selectedOptStatus.value
+        })
+    }
+
+    handleDate = date => {
+        this.setState({
+            tanggalLahirUstadz: date
+        })
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault()
+        console.log(this.state)
+        const niyUstadz = this.props.match.params.niyUstadz
+        axios.put(`http://localhost:3000/editUstadz/${niyUstadz}`,
+            {
+                niyUstadz: this.state.niyUstadz,
+                namaUstadz: this.state.namaUstadz,
+                nikUstadz: this.state.nikUstadz,
+                tempatLahirUstadz: this.state.tempatLahirUstadz,
+                tanggalLahirUstadz: format(this.state.tanggalLahirUstadz, 'yyyy-MM-dd'),
+                agamaUstadz: this.state.agamaUstadz,
+                kewarganegaraan: this.state.kewarganegaraan,
+                jenisKelamin: this.state.jenisKelamin,
+                alamatUstadz: this.state.alamatUstadz,
+                noHP: this.state.noHP,
+                email: this.state.email,
+                pendidikanUstadz: this.state.pendidikanUstadz,
+                statusAktif: this.state.statusAktif
+            })
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+        this.props.history.push('/ustadz')
     }
 
     render() {
@@ -118,8 +196,7 @@ class EditUstadz extends React.Component {
                                         type="text"
                                         name="niyUstadz"
                                         value={niyUstadz}
-                                        onChange={this.handleChange}
-                                        placeholder="NIY Ustadz"
+                                        disabled
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="namaUstadz">
@@ -129,7 +206,6 @@ class EditUstadz extends React.Component {
                                         name="namaUstadz"
                                         value={namaUstadz}
                                         onChange={this.handleChange}
-                                        placeholder="Nama Ustadz"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="nikUstadz">
@@ -139,7 +215,6 @@ class EditUstadz extends React.Component {
                                         name="nikUstadz"
                                         value={nikUstadz}
                                         onChange={this.handleChange}
-                                        placeholder="NIK Ustadz"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="tempatLahirUstadz">
@@ -149,7 +224,6 @@ class EditUstadz extends React.Component {
                                         name="tempatLahirUstadz"
                                         value={tempatLahirUstadz}
                                         onChange={this.handleChange}
-                                        placeholder="Tempat Lahir Ustadz"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="tanggalLahirUstadz">
@@ -196,7 +270,6 @@ class EditUstadz extends React.Component {
                                         name="alamatUstadz"
                                         value={alamatUstadz}
                                         onChange={this.handleChange}
-                                        placeholder="Alamat Ustadz"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="noHP">
@@ -206,7 +279,6 @@ class EditUstadz extends React.Component {
                                         name="noHP"
                                         value={noHP}
                                         onChange={this.handleChange}
-                                        placeholder="Nomer Handphone"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="email">
@@ -216,7 +288,6 @@ class EditUstadz extends React.Component {
                                         name="email"
                                         value={email}
                                         onChange={this.handleChange}
-                                        placeholder="Email"
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="pendidikanUstadz">
@@ -240,7 +311,7 @@ class EditUstadz extends React.Component {
                             </Col>
                         </Row>
                         <Form.Group>
-                            <Button variant='success' type='submit'>Tambah</Button>
+                            <Button variant='success' type='submit'>Edit</Button>
                         </Form.Group>
                     </Form>
                 </Container>
