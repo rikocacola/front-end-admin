@@ -1,11 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 
 import { Row, Form, Col, Button, Container } from 'react-bootstrap';
 import Select from 'react-select'
 import DatePicker from 'react-date-picker'
-
 
 const optionsAgama = [
     { value: "Islam", label: "Islam" },
@@ -44,8 +43,7 @@ const optionsStatusAktif = [
     { value: "TA", label: "Tidak Aktif" }
 ];
 
-
-class AddUstadz extends React.Component {
+class EditUstadz extends React.Component {
     constructor(props) {
         super(props);
 
@@ -71,93 +69,45 @@ class AddUstadz extends React.Component {
         }
     }
 
-    handleChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
-
-    handleSelectAgama = selectedOptAgama => {
-        this.setState({
-            selectedOptAgama,
-            agamaUstadz: selectedOptAgama.value
-        })
-    }
-
-    handleSelectKwn = selectedOptKwn => {
-        this.setState({
-            selectedOptKwn,
-            kewarganegaraan: selectedOptKwn.value
-        })
-    }
-
-    handleSelectJK = selectedOptJK => {
-        this.setState({
-            selectedOptJK,
-            jenisKelamin: selectedOptJK.value
-        })
-    }
-
-    handleSelectPend = selectedOptPend => {
-        this.setState({
-            selectedOptPend,
-            pendidikanUstadz: selectedOptPend.value
-        })
-    }
-
-    handleSelectStatus = selectedOptStatus => {
-        this.setState({
-            selectedOptStatus,
-            statusAktif: selectedOptStatus.value
-        })
-    }
-
-    handleDate = date => {
-        this.setState({
-            tanggalLahirUstadz: date
-        })
-    }
-
-    handleSubmit = e => {
-        e.preventDefault()
-        console.log(this.state)
-        axios.post(`http://localhost:3000/postUstadz`,
-            {
-                niyUstadz: this.state.niyUstadz,
-                namaUstadz: this.state.namaUstadz,
-                nikUstadz: this.state.nikUstadz,
-                tempatLahirUstadz: this.state.tempatLahirUstadz,
-                tanggalLahirUstadz: format(this.state.tanggalLahirUstadz, 'yyyy-MM-dd'),
-                agamaUstadz: this.state.agamaUstadz,
-                kewarganegaraan: this.state.kewarganegaraan,
-                jenisKelamin: this.state.jenisKelamin,
-                alamatUstadz: this.state.alamatUstadz,
-                noHP: this.state.noHP,
-                email: this.state.email,
-                pendidikanUstadz: this.state.pendidikanUstadz,
-                statusAktif: this.state.statusAktif
-            })
-            .then(response => {
-                console.log(response)
+    componentDidMount = () => {
+        const niyUstadz = this.props.match.params.niyUstadz
+        axios.get(`http://localhost:3000/getUstadz/${niyUstadz}`)
+            .then(res => {
+                console.log(res)
+                this.setState({
+                    niyUstadz: res.data.niyUstadz,
+                    namaUstadz: res.data.namaUstadz,
+                    nikUstadz: res.data.nikUstadz,
+                    tempatLahirUstadz: res.data.tempatLahirUstadz,
+                    tanggalLahirUstadz: res.data.tanggalLahirUstadz,
+                    agamaUstadz: res.data.agamaUstadz,
+                    kewarganegaraan: res.data.kewarganegaraan,
+                    jenisKelamin: res.data.jenisKelamin,
+                    alamatUstadz: res.data.alamatUstadz,
+                    noHP: res.data.noHP,
+                    email: res.data.email,
+                    pendidikanUstadz: res.data.pendidikanUstadz,
+                    statusAktif: res.data.statusAktif
+                })
             })
             .catch(error => {
                 console.log(error)
+                this.setState({
+                    errorMsg: 'Error retreiving data'
+                })
             })
-
-        this.props.history.push('/ustadz')
     }
-
 
     render() {
         const {
             niyUstadz, namaUstadz, nikUstadz, tempatLahirUstadz, tanggalLahirUstadz, alamatUstadz, noHP, email, selectedOptAgama, selectedOptJK,
-            selectedOptKwn, selectedOptPend, selectedOptStatus
+            selectedOptKwn, selectedOptPend, selectedOptStatus, agamaUstadz, kewarganegaraan, jenisKelamin, pendidikanUstadz, statusAktif
         } = this.state
         return (
             <div>
                 <Container>
                     <div>
-                        <h2>Add Ustadz</h2>
+                        <h2>Edit Ustadz</h2>
                     </div>
                     <Form onSubmit={this.handleSubmit}>
                         <Row>
@@ -216,7 +166,7 @@ class AddUstadz extends React.Component {
                                         value={selectedOptAgama}
                                         onChange={this.handleSelectAgama}
                                         options={optionsAgama}
-                                        placeholder="Agama"
+                                        placeholder={agamaUstadz}
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="kewarganegaraan">
@@ -225,7 +175,7 @@ class AddUstadz extends React.Component {
                                         value={selectedOptKwn}
                                         onChange={this.handleSelectKwn}
                                         options={optionsKewarganegaraan}
-                                        placeholder="Kewarganegaraan"
+                                        placeholder={kewarganegaraan}
                                     />
                                 </Form.Group>
                             </Col>
@@ -236,7 +186,7 @@ class AddUstadz extends React.Component {
                                         value={selectedOptJK}
                                         onChange={this.handleSelectJK}
                                         options={optionsJenisKelamin}
-                                        placeholder="Jenis Kelamin"
+                                        placeholder={jenisKelamin}
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="alamatUstadz">
@@ -275,7 +225,7 @@ class AddUstadz extends React.Component {
                                         value={selectedOptPend}
                                         onChange={this.handleSelectPend}
                                         options={optionsPendidikan}
-                                        placeholder="Pendidikan Terakhir"
+                                        placeholder={pendidikanUstadz}
                                     />
                                 </Form.Group>
                                 <Form.Group controlId="statusAktif">
@@ -284,7 +234,7 @@ class AddUstadz extends React.Component {
                                         value={selectedOptStatus}
                                         onChange={this.handleSelectStatus}
                                         options={optionsStatusAktif}
-                                        placeholder="Status Aktif"
+                                        placeholder={statusAktif}
                                     />
                                 </Form.Group>
                             </Col>
@@ -299,4 +249,20 @@ class AddUstadz extends React.Component {
     }
 }
 
-export default AddUstadz;
+export default EditUstadz;
+
+// this.setState({
+//     niyUstadz: res.data.niyUstadz,
+//     namaUstadz: res.data.namaUstadz,
+//     nikUstadz: res.data.nikUstadz,
+//     tempatLahirUstadz: res.data.tempatLahirUstadz,
+//     tanggalLahirUstadz: res.data.tanggalLahirUstadz,
+//     agamaUstadz: res.data.agamaUstadz,
+//     kewarganegaraan: res.data.kewarganegaraan,
+//     jenisKelamin: res.data.jenisKelamin,
+//     alamatUstadz: res.data.alamatUstadz,
+//     noHP: res.data.noHP,
+//     email: res.data.email,
+//     pendidikanUstadz: res.data.pendidikanUstadz,
+//     statusAktif: res.data.statusAktif
+// })

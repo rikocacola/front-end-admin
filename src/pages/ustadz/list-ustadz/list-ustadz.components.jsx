@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import {format, parseISO} from 'date-fns';
+import {Link} from 'react-router-dom';
 
 import {Button, Table} from 'react-bootstrap';
 
@@ -34,9 +35,6 @@ class ListUstadz extends React.Component {
         const {ustadz, errorMsg} = this.state
         return(
             <div>
-                {
-                ustadz.length ?
-                ustadz.map(ustad => 
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -49,6 +47,9 @@ class ListUstadz extends React.Component {
                                 <th>Aksi</th>
                                 </tr>
                             </thead>
+                {
+                ustadz.length ?
+                ustadz.map(ustad => 
                             <tbody>
                                 <tr key={ustad.niyUstadz}>
                                 <td>1</td>
@@ -57,15 +58,20 @@ class ListUstadz extends React.Component {
                                 <td>{ustad.tempatLahirUstadz}</td>
                                 <td>{format(parseISO(ustad.tanggalLahirUstadz),'dd/MM/yyyy')}</td>
                                 <td>{ustad.pendidikanUstadz}</td>
-                                <td><Button></Button></td>
+                                <td>
+                                    <Link to={'/ustadz/edit/' + ustad.niyUstadz}>
+                                    <Button><i className="fa fa-pencil-square-o" aria-hidden="true"></i></Button>
+                                    </Link>
+                                    <Button><i className="fa fa-trash" aria-hidden="true"></i></Button>
+                                </td>
                                 </tr>
                             </tbody>
-                        </Table>
                 ) : null }
                 {
                     errorMsg ? 
                     <div>{errorMsg}</div> : null
                 }
+                        </Table>
             </div>
         )
     }
