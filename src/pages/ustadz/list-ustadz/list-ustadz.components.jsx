@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import TableUstadz from '../table-ustadz/table-ustadz.component.jsx'
 
+import {Table} from 'react-bootstrap'
+
 class ListUstadz extends React.Component {
     constructor(props) {
         super(props);
@@ -13,7 +15,7 @@ class ListUstadz extends React.Component {
         }
     }
     
-    componentDidMount() {
+    componentDidMount= () => {
         axios.get(`http://localhost:3000/getUstadz`)
             .then(response => {
                 console.log(response)
@@ -32,7 +34,7 @@ class ListUstadz extends React.Component {
     render() {
         const renderData = this.state.ustadz.map(ustadz => {
             return (
-                <TableUstadz ustadz={ustadz} key={ustadz.niyUstadz}/>
+                <TableUstadz ustadz={ustadz} refresh={this.componentDidMount}/>
             )
         })
         return (

@@ -1,75 +1,53 @@
 import React from 'react';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
+import axios from 'axios';
 
 import {Table, Button} from 'react-bootstrap';
 import {format, parseISO} from 'date-fns'
 
 
-function TableUstadz({ ustadz }) {
+function TableUstadz({ ustadz, refresh }) {
+
+    function deleteUstadz() {
+        axios.delete(`http://localhost:3000/deleteUstadz/${ustadz.niyUstadz}` )
+        return refresh()
+    }
     return (
         <div>
             <Table responsive>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>No. Induk</th>
-                        <th>Nama</th>
-                        <th>Tempat Lahir</th>
-                        <th>Tanggal Lahir</th>
-                        <th>Pendidikan Terakhir</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>{ustadz.niyUstadz}</td>
-                                    <td>{ustadz.namaUstadz}</td>
-                                    <td>{ustadz.tempatLahirUstadz}</td>
-                                    <td>{format(parseISO(ustadz.tanggalLahirUstadz), 'dd/MM/yyyy')}</td>
-                                    <td>{ustadz.pendidikanUstadz}</td>
-                                    <td>
-                                        <Link to={'/ustadz/edit/' + ustadz.niyUstadz}>
-                                            <Button><i className="fa fa-pencil-square-o" aria-hidden="true"></i></Button>
-                                        </Link>
-                                        {/* <Button onClick={deleteConfirm}><i className="fa fa-trash" aria-hidden="true"></i></Button> */}
-                                    </td>
-                                </tr>
-                            </tbody>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>No. Induk</th>
+                            <th>Nama</th>
+                            <th>Tempat Lahir</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Pendidikan Terakhir</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr key={ustadz.niyUstadz}>
+                            <td>1</td>
+                            <td>{ustadz.niyUstadz}</td>
+                            <td>{ustadz.namaUstadz}</td>
+                            <td>{ustadz.tempatLahirUstadz}</td>
+                            <td>{format(parseISO(ustadz.tanggalLahirUstadz), 'dd/MM/yyyy')}</td>
+                            <td>{ustadz.pendidikanUstadz}</td>
+                            <td>
+                                <Link to={'/ustadz/edit/' + ustadz.niyUstadz}>
+                                    <Button><i className="fa fa-pencil-square-o" aria-hidden="true"></i></Button>
+                                </Link>
+                                <Button onClick={deleteUstadz}><i className="fa fa-trash" aria-hidden="true"></i></Button>
+                            </td>
+                        </tr>
+                    </tbody>
             </Table>
         </div>
     )
 }
 
 export default TableUstadz;
-// deleteUstadz(niyUstadz) {
-//     const { ustadz } = this.state;
-
-//     const apiUrl = "http://localhost:3000/deleteUstadz/";
-//     const formData = new FormData();
-//     formData.append('niyUstadz', niyUstadz);
-
-//     const options = {
-//         method: 'DELETE',
-//         body: formData
-//     }
-
-//     fetch((apiUrl + niyUstadz), options)
-//         .then(res => res.json())
-//         .then(
-//             (result) => {
-//                 this.setState({
-//                     response: result,
-//                     ustadz: ustadz.filter(ustad => ustad.niyUstadz !== niyUstadz)
-//                 });
-//             },
-//             (error) => {
-//                 this.setState({
-//                     error
-//                 });
-//             }
-//         )
-// }
 
 // const { ustadz, errorMsg } = this.state
 
